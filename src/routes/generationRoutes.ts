@@ -26,18 +26,18 @@ generationRouter.get('/:jobId/status', (req, res) => {
   return res.json(status);
 });
 
-// List generated spec files
+// List generated Playwright codegen files
 generationRouter.get('/files', (_req, res) => {
-  const specsDir = path.join(process.cwd(), process.env.GEN_OUTPUT_DIR || 'generated', 'specs');
-  if (!fs.existsSync(specsDir)) return res.json({ files: [] });
-  const files = fs.readdirSync(specsDir).filter((f) => f.endsWith('.spec.ts') || f.endsWith('.spec.js'));
+  const codegenDir = path.join(process.cwd(), process.env.GEN_OUTPUT_DIR || 'generated', 'playwright');
+  if (!fs.existsSync(codegenDir)) return res.json({ files: [] });
+  const files = fs.readdirSync(codegenDir).filter((f) => f.endsWith('.ts') || f.endsWith('.js'));
   res.json({ files });
 });
 
 // Download a generated file by name
 generationRouter.get('/files/:name', (req, res) => {
   const name = req.params.name;
-  const file = path.join(process.cwd(), process.env.GEN_OUTPUT_DIR || 'generated', 'specs', name);
+  const file = path.join(process.cwd(), process.env.GEN_OUTPUT_DIR || 'generated', 'playwright', name);
   if (!fs.existsSync(file)) return res.status(404).json({ error: 'File not found' });
   res.download(file);
 });

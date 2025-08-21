@@ -48,7 +48,7 @@ describe('E2E generation', () => {
     }
   });
 
-  it('uploads feature and generates a spec', async () => {
+  it('uploads feature and generates a Playwright codegen recording', async () => {
     const featurePath = path.join(process.cwd(), 'features', 'sample.feature');
     const upload = await request(app).post('/api/features').attach('file', featurePath);
     expect(upload.status).toBe(200);
@@ -81,7 +81,7 @@ describe('E2E generation', () => {
 
     expect(status).toBe('completed');
 
-    const specPath = path.join(process.cwd(), 'generated', 'specs', 'sample_login---successful_login.spec.ts');
+    const specPath = path.join(process.cwd(), 'generated', 'playwright', 'sample_login---successful_login.ts');
     expect(fs.existsSync(specPath)).toBe(true);
     const content = fs.readFileSync(specPath, 'utf-8');
     expect(content).toContain('page.fill');

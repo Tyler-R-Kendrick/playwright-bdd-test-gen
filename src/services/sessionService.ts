@@ -4,7 +4,7 @@ import { parseGherkin } from '../parsers/gherkinParser.js';
 import { buildPrompt } from './promptService.js';
 import { createAgent } from './ai/agentFactory.js';
 import { PlaywrightController, Action, ActionResult } from './codegen/playwrightController.js';
-import { writeSpecForScenario } from './generation/testWriter.js';
+import { writePlaywrightCodegenForScenario } from './generation/testWriter.js';
 import { v4 as uuidv4 } from 'uuid';
 
 type JobStatus = 'queued' | 'running' | 'completed' | 'failed';
@@ -76,9 +76,9 @@ export const sessionService = {
         }
 
         if (job.status !== 'failed') {
-          // write generated spec
+          // persist the recorder/codegen-style Playwright test file (simulated codegen output)
           const out = path.join(process.cwd(), process.env.GEN_OUTPUT_DIR || 'generated');
-          await writeSpecForScenario(feature.title, scenario.title, controller.getActions(), out);
+          await writePlaywrightCodegenForScenario(feature.title, scenario.title, controller.getActions(), out);
           job.status = 'completed';
           job.result = { generated: true };
         }
@@ -127,7 +127,7 @@ export const sessionService = {
       }
 
       // fill field: "I fill in "username" with "user""
-      const fillMatch = t.match(/fill in "?([^"]+)"? with "?([^"]+)"?/i);
+      const fillMatch = t.match(/fill in "?([^\"]+)"? with "?([^\"]+)"?/i);
       if (fillMatch) {
         const selector = `input[name="${fillMatch[1]}"]`;
         actions.push({ type: 'fill', selector, value: fillMatch[2] } as Action);
@@ -135,7 +135,7 @@ export const sessionService = {
       }
 
       // click link or button with text
-      const clickMatch = t.match(/click(?: on)?(?: the)? "?([^"]+)"?/i);
+      const clickMatch = t.match(/click(?: on)?(?: the)? "?([^\"]+)"?/i);
       if (clickMatch) {
         const text = clickMatch[1];
         const selector = `text="${text}"`;
@@ -144,7 +144,7 @@ export const sessionService = {
       }
 
       // "I should see "Welcome"" -> wait for text
-      const seeMatch = t.match(/should see "?([^"]+)"?/i);
+      const seeMatch = t.match(/should see "?([^\"]+)"?/i);
       if (seeMatch) {
         const txt = seeMatch[1];
         actions.push({ type: 'waitForSelector', selector: `text="${txt}"`, timeout: 7000 } as Action);

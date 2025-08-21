@@ -7,7 +7,7 @@ This repository contains:
 - a Gherkin parser and fallback parser
 - AI adapter hooks (Claude / Browser-Use)
 - a Playwright controller that executes browser actions and captures an action trace
-- a test writer that emits Playwright `.spec.ts` files under `generated/specs`
+- a test writer that emits Playwright test files (simulated Playwright codegen/recorder output) under `generated/playwright`
 
 
 ## Prerequisites
@@ -55,8 +55,8 @@ When running normally (NODE_ENV !== "test") the server also attaches an MCP WebS
 - `GET /api/features/:id` — download the raw feature file
 - `POST /api/generation/:featureId` — start a generation job. JSON body may include `{ baseUrl }`. Returns `{ jobId }`.
 - `GET /api/generation/:jobId/status` — poll job status (`queued`, `running`, `completed`, `failed`).
-- `GET /api/generation/files` — list generated spec files (under `generated/specs`).
-- `GET /api/generation/files/:name` — download a generated spec file.
+- `GET /api/generation/files` — list generated Playwright codegen/recorder files (under `generated/playwright`).
+- `GET /api/generation/files/:name` — download a generated Playwright test file.
 
 
 ## MCP Server
@@ -123,6 +123,5 @@ Notes:
 ## Notes
 - The project contains two parsing strategies: the official `@cucumber/gherkin` parser (preferred) and a resilient line-based fallback.
 - AI adapters are implemented as HTTP clients; you must provide appropriate API keys/URLs when using them.
-
 
 Contributions & feedback welcome.

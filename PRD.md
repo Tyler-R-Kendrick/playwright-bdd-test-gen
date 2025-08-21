@@ -1,12 +1,12 @@
 # Product Requirements Document (PRD): AI-Driven Gherkin to Playwright Test Generator Server
 
 ## Overview
-Build an MCP (Model Context Protocol) server integrating Anthropic's Claude Computer Use tool (or open-source Browser-Use) with Playwright's codegen for automating Playwright test generation from Gherkin BDD feature files. User uploads Gherkin file; server enhances as AI prompt, starts Playwright codegen session, guides AI agent to perform actions, records tests, ends session when complete.
+Build an MCP (Model Context Protocol) server integrating Anthropic's Claude Computer Use tool (or open-source Browser-Use) with Playwright's codegen/recorder for automating Playwright test generation from Gherkin BDD feature files. A user uploads a Gherkin file; the server enhances it into an AI prompt, starts a Playwright codegen (recorder) session, the AI agent drives the browser via MCP, and the recorder produces Playwright test files representing the recorded session.
 
 ## Objectives
-- Automate test code generation for Gherkin scenarios using AI browser control.
+- Automate test code generation for Gherkin scenarios using AI-driven browser control recorded by Playwright's codegen/recorder.
 - Ensure compatibility: Claude/Playwright via MCP; fallback to open-source Browser-Use.
-- Output executable Playwright tests in Cucumber-style for BDD execution.
+- Output executable Playwright test files that reflect a Playwright codegen recording (recorder output).
 
 ## Target Users
 - QA engineers, developers using BDD for web app testing.
@@ -14,38 +14,38 @@ Build an MCP (Model Context Protocol) server integrating Anthropic's Claude Comp
 ## Key Features
 - Gherkin file upload and parsing.
 - AI prompt enhancement from Gherkin (add context, steps breakdown).
-- Start Playwright codegen session (browser recording).
-- AI agent (Claude or Browser-Use) execution: Use prompt to control browser via MCP.
-- Task completion detection: AI checks all Gherkin steps done.
-- End codegen, output Playwright test files.
-- Error handling: Retry failed actions, log sessions.
+- Start Playwright codegen/recorder session (browser recording) and capture recorder output to a file.
+- AI agent (Claude or Browser-Use) execution: use prompt to control browser via MCP while the recorder records actions into a Playwright test file.
+- Task completion detection: AI confirms all Gherkin steps are exercised in the recording.
+- End codegen/recorder, persist the recorded Playwright test file(s).
+- Error handling: Retry failed actions, log sessions and recorder output.
 
 ## User Scenario
 1. User uploads Gherkin feature file.
-2. Server enhances as prompt.
-3. Starts Playwright codegen.
-4. AI agent executes steps in browser.
-5. On completion, ends session, generates tests.
+2. Server enhances it into an AI prompt.
+3. Server starts a Playwright codegen/recorder session and opens a controlled browser context.
+4. AI agent executes steps in the browser via MCP while the recorder captures actions.
+5. On completion, the recorder session ends and the server persists the recorded Playwright test file(s).
 
 ## Architecture
 - Server: Node.js/Express for API endpoints.
 - Gherkin Parser: cucumber-gherkin library.
 - AI Integration: Anthropic API for Claude Computer Use; fallback GitHub Browser-Use.
-- Browser Control: Playwright MCP server for AI interaction.
-- Output: Generated .spec.ts files with Cucumber steps mapped to Playwright actions.
+- Browser Control: Playwright MCP server for AI interaction; recorder/codegen captures actions.
+- Output: Playwright test files produced by the Playwright codegen/recorder session (stored for download/execution).
 
 ## Tech Stack
 - Backend: Node.js.
 - AI: Claude 3.5 Sonnet with Computer Use tool.
 - Open-Source Alt: Browser-Use (GitHub: browser-use/browser-use).
-- Automation: Playwright v1.47+ with codegen and MCP.
-- BDD: Cucumber.js for Gherkin execution in output tests.
+- Automation: Playwright v1.47+ (recorder/codegen is used to persist recorded interactions).
+- BDD: Generated Playwright tests may be executed directly (they reflect recorded Playwright interactions), and can be integrated with Cucumber if desired.
 
 ## Compatibility Check
 - Claude Computer Use compatible with Playwright via MCP (GitHub: invariantlabs-ai/playwright-computer-use). Supports browser control, screenshots, actions.
 - Browser-Use: Open-source, integrates with MCP servers for AI agents; compatible with Playwright.
-- Playwright Codegen: Records AI-driven actions into tests.
-- Gherkin to Playwright: Supported via Cucumber-Playwright integration; generated tests run Gherkin files.
+- Playwright Recorder/Codegen: Records AI-driven actions into Playwright test files.
+- Gherkin to Playwright: The server maps Gherkin steps into prompts and drives the recording; recorded tests reflect the actual browser interactions.
 - Issues: Claude beta latency; mitigate with caching. No direct conflicts found.
 
 ## Control Flow Diagram
@@ -53,11 +53,11 @@ Build an MCP (Model Context Protocol) server integrating Anthropic's Claude Comp
 ```mermaid
 flowchart TD
     A[User Uploads Gherkin File] --> B[Server Parses & Enhances as AI Prompt]
-    B --> C[Start Playwright Codegen Session]
+    B --> C[Start Playwright Codegen/Recorder Session]
     C --> D[AI Agent (Claude/Browser-Use) Receives Prompt]
     D --> E[AI Executes Steps via MCP Browser Control]
     E --> F{All Steps Complete?}
-    F -->|Yes| G[End Codegen Session]
+    F -->|Yes| G[End Recorder Session]
     F -->|No| E
-    G --> H[Output Playwright Test Files]
+    G --> H[Persist Playwright Test File(s) Generated by Recorder]
 ```

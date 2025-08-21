@@ -21,7 +21,7 @@ const generatedDir = path.join(root, process.env.GEN_OUTPUT_DIR || 'generated');
 fs.mkdirSync(featuresDir, { recursive: true });
 fs.mkdirSync(generatedDir, { recursive: true });
 fs.mkdirSync(path.join(generatedDir, 'sessions'), { recursive: true });
-fs.mkdirSync(path.join(generatedDir, 'specs'), { recursive: true });
+fs.mkdirSync(path.join(generatedDir, 'playwright'), { recursive: true });
 fs.mkdirSync(path.join(generatedDir, 'steps'), { recursive: true });
 
 app.get('/health', (_req, res) => {

@@ -7,7 +7,7 @@ import { featureRouter } from './routes/featureRoutes.js';
 import { generationRouter } from './routes/generationRoutes.js';
 import { errorHandler, notFound } from './middleware/errorHandler.js';
 import { logger } from './utils/logger.js';
-import { createMcpServer } from './mcp/server.js';
+import { createMcpRoutes } from './mcp/server.js';
 
 dotenv.config();
 
@@ -39,15 +39,13 @@ const port = Number(process.env.PORT || 4000);
 // Export the app so tests can import without starting a listener
 export { app };
 
-// Start server when not running tests and attach MCP server
+// Start server when not running tests and attach MCP routes (Streamable HTTP transport)
 if (process.env.NODE_ENV !== 'test') {
+  // Register MCP routes on the express app
+  createMcpRoutes(app);
+
   const server = http.createServer(app);
   server.listen(port, () => {
     logger.info({ port }, 'Server started');
-    try {
-      createMcpServer(server);
-    } catch (err: unknown) {
-      logger.error({ err }, 'Failed to start MCP server');
-    }
   });
 }

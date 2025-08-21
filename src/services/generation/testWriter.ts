@@ -16,19 +16,26 @@ export async function writePlaywrightCodegenForScenario(featureTitle: string, sc
   lines.push(`test('${featureTitle} - ${scenarioTitle}', async ({ page }) => {`);
 
   for (const r of actionLog) {
-    const a = r.action as any;
-    if (a.type === 'goto') {
-      lines.push(`  await page.goto('${a.url}');`);
-    } else if (a.type === 'click') {
-      lines.push(`  await page.click('${a.selector}');`);
-    } else if (a.type === 'fill') {
-      lines.push(`  await page.fill('${a.selector}', ${JSON.stringify(a.value)});`);
-    } else if (a.type === 'waitForSelector') {
-      // playwrite codegen often produces wait/expect lines; keep a simple waitForSelector
-      lines.push(`  await page.waitForSelector('${a.selector}', { timeout: ${a.timeout || 5000} });`);
-    } else if (a.type === 'screenshot') {
-      const p = r.screenshot ? r.screenshot : `screenshots/${Date.now()}.png`;
-      lines.push(`  await page.screenshot({ path: '${p}', fullPage: true });`);
+    const a = r.action;
+    switch (a.type) {
+      case 'goto':
+        lines.push(`  await page.goto('${a.url}');`);
+        break;
+      case 'click':
+        lines.push(`  await page.click('${a.selector}');`);
+        break;
+      case 'fill':
+        lines.push(`  await page.fill('${a.selector}', ${JSON.stringify(a.value)});`);
+        break;
+      case 'waitForSelector':
+        // playwrite codegen often produces wait/expect lines; keep a simple waitForSelector
+        lines.push(`  await page.waitForSelector('${a.selector}', { timeout: ${a.timeout || 5000} });`);
+        break;
+      case 'screenshot': {
+        const p = r.screenshot ? r.screenshot : `screenshots/${Date.now()}.png`;
+        lines.push(`  await page.screenshot({ path: '${p}', fullPage: true });`);
+        break;
+      }
     }
   }
 

@@ -14,6 +14,7 @@
   "dependencies": {
     "@cucumber/gherkin": "^27.0.0",
     "@cucumber/messages": "^27.0.0",
+    "@modelcontextprotocol/sdk": "^1.17.3",
     "axios": "^1.5.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
@@ -29,6 +30,7 @@
     "@types/multer": "^1.4.11",
     "@types/node": "^20.12.12",
     "@types/supertest": "^6.0.3",
+    "@types/ws": "^8.18.1",
     "@typescript-eslint/eslint-plugin": "^8.40.0",
     "@typescript-eslint/parser": "^8.40.0",
     "eslint": "^9.33.0",
@@ -37,7 +39,6 @@
     "supertest": "^6.3.3",
     "tsx": "^4.16.2",
     "typescript": "^5.6.2",
-    "vitest": "^3.2.4",
-    "@types/ws": "^8.18.1"
+    "vitest": "^3.2.4"
   }
 }

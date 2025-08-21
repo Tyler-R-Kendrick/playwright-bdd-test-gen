@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { getResource } from '../mcp/resourceManager.js';
 import { parseGherkin } from '../parsers/gherkinParser.js';
 import { buildPrompt } from './promptService.js';
 import { createAgent } from './ai/agentFactory.js';
@@ -18,10 +19,10 @@ export const sessionService = {
   jobs: new Map<string, JobRecord>(),
 
   async startSession(featureId: string, options: Record<string, unknown> = {}) {
-    const featuresDir = path.join(process.cwd(), 'features');
-    const full = path.join(featuresDir, featureId);
-    if (!fs.existsSync(full)) throw new Error('Feature not found');
-    const content = fs.readFileSync(full, 'utf-8');
+    // Features are stored as MCP resources now
+    const featureResource = getResource('feature', featureId);
+    if (!featureResource) throw new Error('Feature not found');
+    const content = featureResource.content;
     const feature = parseGherkin(content);
     const scenario = feature.scenarios[0];
     if (!scenario) throw new Error('No scenarios in feature');

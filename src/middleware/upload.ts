@@ -1,18 +1,7 @@
 import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
-import { v4 as uuidv4 } from 'uuid';
 
-const featuresDir = path.join(process.cwd(), 'features');
-fs.mkdirSync(featuresDir, { recursive: true });
-
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, featuresDir),
-  filename: (_req, file, cb) => {
-    const id = uuidv4();
-    const ext = path.extname(file.originalname) || '.feature';
-    cb(null, `${id}${ext}`);
-  }
-});
+// Use memory storage so uploaded files are available on req.file.buffer
+// and can be registered as MCP resources instead of being persisted to disk.
+const storage = multer.memoryStorage();
 
 export const upload = multer({ storage, limits: { fileSize: 2 * 1024 * 1024 } });
